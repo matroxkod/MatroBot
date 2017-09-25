@@ -47,18 +47,10 @@ class MatroxCommandManager:
         if passedCommand.commandName != "":
            if passedCommand.commandName == "playsong":
                MatroxCommandManager.SpotifyPlaySongCommand(passedCommand)
-           #if passedCommand.commandName == "scott":
-           #    MatroxCommandManager.PlayGeneric(passedCommand)
-           #if passedCommand.commandName == "ring":
-           #    MatroxCommandManager.PlayGeneric(passedCommand)
-           #if passedCommand.commandName == "hype":
-           #    MatroxCommandManager.PlayGeneric(passedCommand)
-           #if passedCommand.commandName == "wrong":
-           #    MatroxCommandManager.PlayGeneric(passedCommand)
-           #return;
            if passedCommand.commandName == "generic":
                MatroxCommandManager.PlayGeneric(passedCommand.commandArgs)
 
+    # TODO: Make commands driven by map
     commands = {"playsong" : SpotifyPlaySongCommand, 
     }
 
@@ -66,8 +58,4 @@ class MatroxCommandManager:
     def isGenericCommand(commandName):
         commandArray = ["scott", "ring", "hype", "wrong"]
         return commandName in commandArray
-        # check if array contains the command
-        #if commandName == "scott" || commandName == "ring" || commandName == "hype" || commandName == "wrong":
-        #    return True
-        #else:
-        #    return False
+
