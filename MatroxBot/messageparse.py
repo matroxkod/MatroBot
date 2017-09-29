@@ -10,7 +10,12 @@ class MessageParser():
         isCommand, command, args = MessageParser.tryParseCommand(msg)
         newCommand = MatroxCommand.MatroxCommand()
         if isCommand:
-            newCommand = MatroxCommand.MatroxCommand(command, args)
+            #Check if we need to create a generic
+            cm = MatroxCommand.MatroxCommandManager()
+            if cm.isGenericCommand(command):
+                newCommand = MessageParser.formatGenericPlay(command)
+            else:
+                newCommand = MatroxCommand.MatroxCommand(command, args)
             print("Got a command")
             return True, newCommand
         else:
@@ -29,3 +34,7 @@ class MessageParser():
         else:
             return False, "", []
 
+    @staticmethod
+    def formatGenericPlay(command):
+        #Format as usable generic
+        return MatroxCommand.MatroxCommand("generic", command)

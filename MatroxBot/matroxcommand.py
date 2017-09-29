@@ -5,6 +5,7 @@ import subprocess
 import os
 #Note that this requires VLC 64-bit installed given Python 2.7.x 64-bit is installed
 import vlc
+import operator
 
 class MatroxCommand:
 
@@ -15,6 +16,7 @@ class MatroxCommand:
 
 #Command Manager
 class MatroxCommandManager:
+    
     @staticmethod
     def SpotifyPlaySongCommand(command):
         print("Opening " + command.commandArgs[0])
@@ -32,24 +34,28 @@ class MatroxCommandManager:
         os.system("taskkill /f /im "+browserApp)
 
     @staticmethod
-    def PlayGreatScott(command):
-        print("Playing Great Scott")
+    def PlayGeneric(command):
+        print("Playing Generic Clip " + command)
         instance = vlc.Instance()
         player = instance.media_player_new()
-        media = instance.media_new("file:///C:/Users/Andrew/Documents/Great Scott.mp3")
+        media = instance.media_new("file:///resources/" + command + ".wav")
         player.set_media(media)
         player.play()
-
-    commands = {"playsong" : SpotifyPlaySongCommand,
-    }
 
     @staticmethod
     def RunCommand(passedCommand):
         if passedCommand.commandName != "":
-           #commands[passedCommand.commandName](passedCommand)
            if passedCommand.commandName == "playsong":
                MatroxCommandManager.SpotifyPlaySongCommand(passedCommand)
-           if passedCommand.commandName == "scott":
-               MatroxCommandManager.PlayGreatScott(passedCommand)
+           if passedCommand.commandName == "generic":
+               MatroxCommandManager.PlayGeneric(passedCommand.commandArgs)
 
-        return;
+    # TODO: Make commands driven by map
+    commands = {"playsong" : SpotifyPlaySongCommand, 
+    }
+
+    @staticmethod
+    def isGenericCommand(commandName):
+        commandArray = ["scott", "ring", "hype", "wrong"]
+        return commandName in commandArray
+
