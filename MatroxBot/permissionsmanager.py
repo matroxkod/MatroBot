@@ -34,8 +34,7 @@ class PermissionsManager:
                 self.updateUserTime(usrName, user, 8)
                 return False, usrName + ": Please wait several seconds before attempting to issue another command."
 
-    @staticmethod
-    def addSecs(time, second):
+    def addSecs(self, time, second):
         date = datetime.datetime(100, 1, 1, time.hour, time.minute, time.second)
         date = date + datetime.timedelta(seconds=second)
         return date.time()

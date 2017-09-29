@@ -6,6 +6,7 @@ import time
 import messageparse as messageParser
 import matroxcommand as commandManager
 import permissionsmanager as permissionsMgr
+import announcementmanager as announceManager
 
 # Make sure you prefix the quotes with an 'r'!
 CHAT_MSG=re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
@@ -21,6 +22,10 @@ s.send("JOIN {}\r\n".format(cfg.CHAN).encode("utf-8"))
 mp = messageParser.MessageParser()
 cm = commandManager.MatroxCommandManager()
 pm = permissionsMgr.PermissionsManager()
+
+# start auto message
+
+#announceManager.AnnouncementManager().loadAnnouncements()
 
 while True:
     response = s.recv(1024).decode("utf-8")
