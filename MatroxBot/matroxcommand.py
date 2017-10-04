@@ -3,15 +3,18 @@
 import time
 import subprocess
 import os
+import permissionsmanager as permissionsMgr
+import announcementmanager as announceMgr
 #Note that this requires VLC 64-bit installed given Python 2.7.x 64-bit is installed
 import vlc
 import operator
 
 class MatroxCommand:
 
-    def __init__(self, command = "", args = []):
+    def __init__(self, command = "", args = [], commandPermissionLevel = permissionsMgr.PermissionLevel.base):
         self.commandName = command
         self.commandArgs = args
+        self.commandPermissionLevel = commandPermissionLevel
 
 
 #Command Manager
@@ -43,12 +46,19 @@ class MatroxCommandManager:
         player.play()
 
     @staticmethod
+    def AddAnnouncement(command):
+        if(len(command.commandArgs) > 0):
+            announceMgr.AnnouncementManager().addAnnouncementMessage(command.commandArgs[0:])
+
+    @staticmethod
     def RunCommand(passedCommand):
         if passedCommand.commandName != "":
-           if passedCommand.commandName == "playsong":
+            if passedCommand.commandName == "playsong":
                MatroxCommandManager.SpotifyPlaySongCommand(passedCommand)
-           if passedCommand.commandName == "generic":
+            if passedCommand.commandName == "generic":
                MatroxCommandManager.PlayGeneric(passedCommand.commandArgs)
+            if passedCommand.commandName == "addannouncement":
+                MatroxCommandManager.AddAnnouncement(passedCommand)
 
     # TODO: Make commands driven by map
     commands = {"playsong" : SpotifyPlaySongCommand, 
@@ -58,4 +68,13 @@ class MatroxCommandManager:
     def isGenericCommand(commandName):
         commandArray = ["scott", "ring", "hype", "wrong"]
         return commandName in commandArray
+
+
+    @staticmethod
+    def getCommandPermissionLevel(commandName):
+        modLevelCommands = ["addannouncement"]
+        if commandName in modLevelCommands:
+            return permissionsMgr.PermissionLevel.mod
+        else:
+            return permissionsMgr.PermissionLevel.base
 

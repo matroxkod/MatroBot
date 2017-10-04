@@ -8,6 +8,9 @@ class Announcement:
         self.announcementid = announcementid
         self.message = message
 
+    def toString(self):
+        return self.announcementid + " " + self.message
+
 # Class responsible for announcement thread, loading announcements
 # saving announcements
 class AnnouncementManager:
@@ -16,19 +19,34 @@ class AnnouncementManager:
 
     announcements = {}
     maxAnnouncementId = 0
+    loadedFile = False
 
     def loadAnnouncements(self):
-        loadedFile, fileContents = self.fm.loadAnnouncementFile()
-        if(loadedFile):
+        self.loadedFile, fileContents = self.fm.loadAnnouncementFile()
+        if(self.loadedFile):
             # Parse file into individual announcements
             for line in fileContents:
                 announce = line.split( )
                 if (announce.count > 1):
-                    loadedId = self.util.try_parse_int(announce[0])
-                    newAnnouncement = Announcement(loadedId, ' '.join(announce[1:]))
-                    self.announcements[loadedId] = newAnnouncement
+                    parsed, loadedId = self.util.try_parse_int(announce[0])
+                    if (parsed):
+                        if (loadedId > self.maxAnnouncementId):
+                             maxAnnouncementId = loadedId
+                        newAnnouncement = Announcement(loadedId, ' '.join(announce[1:]))
+                        self.announcements[loadedId] = newAnnouncement
+                    else:
+                        print "Error parsing announcement id " + announce[0]
                 else:
-                    pass
+                    print "Invalid announcement format " + announce
         else:
             print "Error loading announcements"
 
+    def addAnnouncementMessage(self, message):
+        if(self.loadedFile == False):
+            self.loadAnnouncements()
+        self.maxAnnouncementId += 1
+        newAnnouncement = Announcement(self.maxAnnouncementId, message)
+        if(self.fm.addAnnouncement(newAnnouncement)):
+            self.announcements[self.maxAnnouncementId] = newAnnouncement
+
+        

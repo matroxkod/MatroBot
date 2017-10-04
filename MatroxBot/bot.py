@@ -25,7 +25,7 @@ pm = permissionsMgr.PermissionsManager()
 
 # start auto message
 
-#announceManager.AnnouncementManager().loadAnnouncements()
+announceManager.AnnouncementManager().loadAnnouncements()
 
 while True:
     response = s.recv(1024).decode("utf-8")
@@ -38,12 +38,12 @@ while True:
         # Parse the command
         loadedCommand, command = mp.loadCommandMessage(username, message)
         if loadedCommand:
-            allowed, spamMsg = pm.checkSpam(username)
+            allowed, permissionMessage = pm.canUserRunCommand(username, command)
             if allowed:
                 print("Running command")
                 cm.RunCommand(command)
             else:
-                print(spamMsg)
+                print(permissionMessage)
                 s.send("PRIVMSG {} :{}\r\n".format(cfg.CHAN, spamMsg).encode("utf-8"))
                 #chat(s, spamMsg)
     time.sleep(1 / .5)

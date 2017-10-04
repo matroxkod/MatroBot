@@ -16,6 +16,7 @@ class MessageParser():
                 newCommand = MessageParser.formatGenericPlay(command)
             else:
                 newCommand = MatroxCommand.MatroxCommand(command, args)
+            newCommand.commandPermissionLevel = cm.getCommandPermissionLevel(newCommand.commandName)
             print("Got a command")
             return True, newCommand
         else:
