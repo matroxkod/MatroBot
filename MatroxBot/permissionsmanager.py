@@ -1,16 +1,44 @@
 #permissionsmanager.py
 # Keeps track of users sending commands to ensure no user is spamming bot
+# Keeps track of user permissions
 import datetime
+
+class PermissionLevel:
+    mod = 0
+    base = 1
 
 class User:
 
-    def __init__(self, name = "", nextReplyTime = datetime.datetime.now().time()):
+    def __init__(self, name = "", nextReplyTime = datetime.datetime.now().time(), permissionlevel = PermissionLevel.base):
         self.name = name
         self.nextReplyTime = nextReplyTime
+        self.permissionLevel = permissionlevel
 
 class PermissionsManager:
 
     knownUsers = {}
+    modUsers = {"matroxkod"}
+
+    # Check if the user can run the command
+    def canUserRunCommand(self, usrName, command):
+        # Check if user is spamming
+        notSpam, spamMsg = self.checkSpam(usrName)
+        if (notSpam):
+            # Check if user has permission to run the command
+            if(self.checkCommandPermissions(usrName, command)):
+                return True, ""
+            else:
+                return False, usrName + " is not allowed to run that command."
+        else:
+            return False, spamMsg
+
+    # Checks if the user is allowed to run the command
+    def checkCommandPermissions(self, usrName, command):
+        # Check if command is a mod level command
+        if(command.commandPermissionLevel == PermissionLevel.mod):
+            return self.isModUser(usrName)
+        else:
+            return True
 
     def checkSpam(self, usrName):
         # Store when command was received
@@ -20,6 +48,8 @@ class PermissionsManager:
         if usrName not in self.knownUsers:
             # Create the user and store it
             newUsr = User(usrName, datetime.datetime.now().time())
+            if(self.isModUser(usrName)):
+                newUsr.permissionLevel = PermissionLevel.mod
             self.updateUserTime(usrName, newUsr, 2)
             print("Added new user " + newUsr.name)
             return True, ""
@@ -42,3 +72,9 @@ class PermissionsManager:
     def updateUserTime(self, userName, user, timeToAdd):
         user.nextReplyTime = self.addSecs(datetime.datetime.now().time(), timeToAdd)
         self.knownUsers[userName] = user 
+
+    def isModUser(self, userName):    
+        if(userName in self.modUsers):
+            return True
+        else:
+            return False

@@ -1,2 +1,5 @@
 
 *.pyc
+MatroxBot/.vscode/.ropeproject/config.py
+MatroxBot/.vscode/.ropeproject/objectdb
+MatroxBot/secrets.py
