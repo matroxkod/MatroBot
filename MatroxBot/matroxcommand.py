@@ -35,6 +35,7 @@ class MatroxCommandManager:
         time.sleep(10)
         process.kill()
         os.system("taskkill /f /im "+browserApp)
+        return "Opened " + command.commandArgs[0]
 
     @staticmethod
     def PlayGeneric(command):
@@ -48,17 +49,22 @@ class MatroxCommandManager:
     @staticmethod
     def AddAnnouncement(command):
         if(len(command.commandArgs) > 0):
-            announceMgr.AnnouncementManager().addAnnouncementMessage(command.commandArgs[0:])
+            flattenMessage = " ".join(command.commandArgs[0:])
+            return announceMgr.AnnouncementManager.Instance().addAnnouncementMessage(flattenMessage)
 
     @staticmethod
     def RunCommand(passedCommand):
         if passedCommand.commandName != "":
+            #Get command from commands map
+            #command = command[passedCommand]
+            #return invoke command
+
             if passedCommand.commandName == "playsong":
-               MatroxCommandManager.SpotifyPlaySongCommand(passedCommand)
+              return MatroxCommandManager.SpotifyPlaySongCommand(passedCommand)
             if passedCommand.commandName == "generic":
-               MatroxCommandManager.PlayGeneric(passedCommand.commandArgs)
+               return MatroxCommandManager.PlayGeneric(passedCommand.commandArgs)
             if passedCommand.commandName == "addannouncement":
-                MatroxCommandManager.AddAnnouncement(passedCommand)
+               return MatroxCommandManager.AddAnnouncement(passedCommand)
 
     # TODO: Make commands driven by map
     commands = {"playsong" : SpotifyPlaySongCommand, 

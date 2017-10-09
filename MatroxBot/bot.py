@@ -24,8 +24,7 @@ cm = commandManager.MatroxCommandManager()
 pm = permissionsMgr.PermissionsManager()
 
 # start auto message
-
-announceManager.AnnouncementManager().loadAnnouncements()
+announceManager.AnnouncementManager.Instance().startAnnouncementThread()
 
 while True:
     response = s.recv(1024).decode("utf-8")
@@ -35,17 +34,18 @@ while True:
         username = re.search(r"\w+", response).group(0) # return the entire match
         message = CHAT_MSG.sub("", response)
         print(username + ": " + message)
+        finalMessage = ""
         # Parse the command
         loadedCommand, command = mp.loadCommandMessage(username, message)
         if loadedCommand:
-            allowed, permissionMessage = pm.canUserRunCommand(username, command)
+            allowed, finalMessage = pm.canUserRunCommand(username, command)
             if allowed:
                 print("Running command")
-                cm.RunCommand(command)
-            else:
-                print(permissionMessage)
-                s.send("PRIVMSG {} :{}\r\n".format(cfg.CHAN, spamMsg).encode("utf-8"))
-                #chat(s, spamMsg)
+                finalMessage = cm.RunCommand(command)
+
+        if(len(finalMessage) > 0):
+            print(finalMessage)
+            s.send("PRIVMSG {} :{}\r\n".format(cfg.CHAN, finalMessage).encode("utf-8"))
     time.sleep(1 / .5)
 
 @staticmethod

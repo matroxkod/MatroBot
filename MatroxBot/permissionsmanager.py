@@ -1,5 +1,6 @@
 #permissionsmanager.py
 # Keeps track of users sending commands to ensure no user is spamming bot
+# Keeps track of user permissions
 import datetime
 
 class PermissionLevel:
