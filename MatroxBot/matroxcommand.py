@@ -21,7 +21,7 @@ class MatroxCommand:
 class MatroxCommandManager:
     
     @staticmethod
-    def SpotifyPlaySongCommand(command):
+    def spotifyPlaySongCommand(command):
         print("Opening " + command.commandArgs[0])
         #browserApp = 'chrome.exe'
         browserApp = 'firefox.exe'
@@ -38,7 +38,7 @@ class MatroxCommandManager:
         return "Opened " + command.commandArgs[0]
 
     @staticmethod
-    def PlayGeneric(command):
+    def playGeneric(command):
         print("Playing Generic Clip " + command)
         instance = vlc.Instance()
         player = instance.media_player_new()
@@ -47,27 +47,33 @@ class MatroxCommandManager:
         player.play()
 
     @staticmethod
-    def AddAnnouncement(command):
+    def addAnnouncement(command):
         if(len(command.commandArgs) > 0):
             flattenMessage = " ".join(command.commandArgs[0:])
             return announceMgr.AnnouncementManager.Instance().addAnnouncementMessage(flattenMessage)
+    @staticmethod
+    def reloadAnnouncements(command):
+        return announceMgr.AnnouncementManager.Instance().reloadAnnouncements()
 
     @staticmethod
-    def RunCommand(passedCommand):
+    def runCommand(passedCommand):
         if passedCommand.commandName != "":
             #Get command from commands map
             #command = command[passedCommand]
             #return invoke command
 
             if passedCommand.commandName == "playsong":
-              return MatroxCommandManager.SpotifyPlaySongCommand(passedCommand)
+              return MatroxCommandManager.spotifyPlaySongCommand(passedCommand)
             if passedCommand.commandName == "generic":
-               return MatroxCommandManager.PlayGeneric(passedCommand.commandArgs)
+               return MatroxCommandManager.playGeneric(passedCommand.commandArgs)
             if passedCommand.commandName == "addannouncement":
-               return MatroxCommandManager.AddAnnouncement(passedCommand)
+               return MatroxCommandManager.addAnnouncement(passedCommand)
+            if passedCommand.commandName == "reloadannouncements":
+                return MatroxCommandManager.reloadAnnouncements(passedCommand)
+                
 
     # TODO: Make commands driven by map
-    commands = {"playsong" : SpotifyPlaySongCommand, 
+    commands = {"playsong" : spotifyPlaySongCommand, 
     }
 
     @staticmethod

@@ -91,4 +91,11 @@ class AnnouncementManager:
             self.announcements[self.maxAnnouncementId] = newAnnouncement
             return "Added announcement " + newAnnouncement.messageToString()
         return "Failed to add announcement " + message + ". Check error logs."
+
+    def reloadAnnouncements(self):
+        self.loadAnnouncements()
+        if(self.loadedFile):
+            return "Reloaded announcements file."
+        else:
+            return "Could not reload announcements file. Check error log."
       

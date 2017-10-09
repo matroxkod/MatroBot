@@ -1,3 +1,4 @@
-
 1 oh yes
 2 here's a new one
+3 this was added directly to the file
+4 and this was added later

@@ -41,7 +41,7 @@ while True:
             allowed, finalMessage = pm.canUserRunCommand(username, command)
             if allowed:
                 print("Running command")
-                finalMessage = cm.RunCommand(command)
+                finalMessage = cm.runCommand(command)
 
         if(len(finalMessage) > 0):
             print(finalMessage)
