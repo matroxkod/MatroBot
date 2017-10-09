@@ -1,9 +1,10 @@
 import filemanager as fileManager
-import utility as utilityClass
+from utility import Utility
 
 from threading import Thread
 import time
 from singleton import Singleton
+from chatmanager import ChatManager
 
 # Data structure of an annnoncement
 class Announcement:
@@ -29,6 +30,7 @@ class AnnouncementManager:
         self.announcements = {}
         self.maxAnnouncementId = 0
         self.loadedFile = False
+        self.announcementInterval = 5
     
     def startAnnouncementThread(self):
         announcementThread = Thread(target = self.runThread)
@@ -42,9 +44,8 @@ class AnnouncementManager:
             if(self.loadedFile):
                 # Check if we actually loaded announcements
                 if(len(self.announcements) > 0):
-                    #TODO send to chat
                     try:
-                        print(self.announcements[currentAnnounceId].messageToString())  
+                        ChatManager.Instance().sendMessageToChat(self.announcements[currentAnnounceId].messageToString())  
                     except Exception as detail:
                         print "Unexpected exception in announcement thread: ", detail
                         pass
@@ -60,16 +61,25 @@ class AnnouncementManager:
                 else:
                     print "Failed to load announcements file after 1 attempt."
                     return
-            time.sleep(2)
+            interval = 300
+            if not isinstance( self.announcementInterval, (int, long)):            
+                parsed, interval = Utility.try_parse_int(self.announcementInterval)
+                if not parsed:
+                    print "Failed to parse correct interval. Defaulting to 25 seconds."
+            else:
+                interval = self.announcementInterval
+            time.sleep(interval)
     
     def loadAnnouncements(self):
         self.loadedFile, fileContents = fileManager.FileManager.Instance().loadAnnouncementFile()
         if(self.loadedFile):
+            # Clear out announcements
+            self.announcements.clear()
             # Parse file into individual announcements
             for line in fileContents:
                 announce = line.split( )
                 if (len(announce) > 1):
-                    parsed, loadedId = utilityClass.Utility().try_parse_int(announce[0])
+                    parsed, loadedId = Utility().try_parse_int(announce[0])
                     if (parsed):
                         if (loadedId > self.maxAnnouncementId):
                              self.maxAnnouncementId = loadedId
