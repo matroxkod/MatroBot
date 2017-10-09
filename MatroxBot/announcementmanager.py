@@ -30,7 +30,7 @@ class AnnouncementManager:
         self.announcements = {}
         self.maxAnnouncementId = 0
         self.loadedFile = False
-        self.announcementInterval = 5
+        self.announcementInterval = 300
     
     def startAnnouncementThread(self):
         announcementThread = Thread(target = self.runThread)
