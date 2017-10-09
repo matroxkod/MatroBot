@@ -2,7 +2,7 @@
 import re
 import time
 from messageparse import MessageParser
-import matroxcommand as commandManager
+from matroxcommand import MatroxCommandManager
 from permissionsmanager import PermissionsManager
 import announcementmanager as announceManager
 from chatmanager import ChatManager
@@ -14,8 +14,8 @@ CHAT_MSG=re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 ChatManager.Instance().openChatConnection()
 
 mp = MessageParser()
-cm = commandManager.MatroxCommandManager()
-permissions = PermissionsManager()
+commandManager = MatroxCommandManager()
+permissionsManager = PermissionsManager()
 
 # start auto message
 announceManager.AnnouncementManager.Instance().startAnnouncementThread()
@@ -32,10 +32,10 @@ while True:
         # Parse the command
         loadedCommand, command = mp.loadCommandMessage(username, message)
         if loadedCommand:
-            allowed, finalMessage = permissions.canUserRunCommand(username, command)
+            allowed, finalMessage = permissionsManager.canUserRunCommand(username, command)
             if allowed:
                 print("Running command")
-                finalMessage = cm.runCommand(command)
+                finalMessage = commandManager.runCommand(command)
 
         if(len(finalMessage) > 0):
             print(finalMessage)
