@@ -1,7 +1,7 @@
 # bot.py
 import re
 import time
-import messageparse as messageParser
+from messageparse import MessageParser
 import matroxcommand as commandManager
 import permissionsmanager as permissionsMgr
 import announcementmanager as announceManager
@@ -13,7 +13,7 @@ CHAT_MSG=re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 # network functions go here
 ChatManager.Instance().openChatConnection()
 
-mp = messageParser.MessageParser()
+mp = MessageParser()
 cm = commandManager.MatroxCommandManager()
 pm = permissionsMgr.PermissionsManager()
 
