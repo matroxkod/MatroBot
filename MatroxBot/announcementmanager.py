@@ -1,4 +1,4 @@
-import filemanager as fileManager
+from filemanager import FileManager
 from utility import Utility
 
 from threading import Thread
@@ -71,7 +71,7 @@ class AnnouncementManager:
             time.sleep(interval)
     
     def loadAnnouncements(self):
-        self.loadedFile, fileContents = fileManager.FileManager.Instance().loadAnnouncementFile()
+        self.loadedFile, fileContents = FileManager.Instance().loadAnnouncementFile()
         if(self.loadedFile):
             # Clear out announcements
             self.announcements.clear()
@@ -97,7 +97,7 @@ class AnnouncementManager:
             self.loadAnnouncements()
         self.maxAnnouncementId += 1
         newAnnouncement = Announcement(self.maxAnnouncementId, message)
-        if(fileManager.FileManager.Instance().addAnnouncement(newAnnouncement)):
+        if(FileManager.Instance().addAnnouncement(newAnnouncement)):
             self.announcements[self.maxAnnouncementId] = newAnnouncement
             return "Added announcement " + newAnnouncement.messageToString()
         return "Failed to add announcement " + message + ". Check error logs."

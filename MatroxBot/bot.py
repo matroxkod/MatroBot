@@ -4,7 +4,7 @@ import time
 from messageparse import MessageParser
 from matroxcommand import MatroxCommandManager
 from permissionsmanager import PermissionsManager
-import announcementmanager as announceManager
+from announcementmanager import AnnouncementManager
 from chatmanager import ChatManager
 
 # Make sure you prefix the quotes with an 'r'!
@@ -13,12 +13,12 @@ CHAT_MSG=re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 # network functions go here
 ChatManager.Instance().openChatConnection()
 
-mp = MessageParser()
+messageParser = MessageParser()
 commandManager = MatroxCommandManager()
 permissionsManager = PermissionsManager()
 
 # start auto message
-announceManager.AnnouncementManager.Instance().startAnnouncementThread()
+AnnouncementManager.Instance().startAnnouncementThread()
 
 while True:
     response = ChatManager.Instance().receiveMessage()
@@ -30,7 +30,7 @@ while True:
         print(username + ": " + message)
         finalMessage = ""
         # Parse the command
-        loadedCommand, command = mp.loadCommandMessage(username, message)
+        loadedCommand, command = messageParser.loadCommandMessage(username, message)
         if loadedCommand:
             allowed, finalMessage = permissionsManager.canUserRunCommand(username, command)
             if allowed:
