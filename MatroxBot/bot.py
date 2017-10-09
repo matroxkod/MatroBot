@@ -3,7 +3,7 @@ import re
 import time
 from messageparse import MessageParser
 import matroxcommand as commandManager
-import permissionsmanager as permissionsMgr
+from permissionsmanager import PermissionsManager
 import announcementmanager as announceManager
 from chatmanager import ChatManager
 
@@ -15,7 +15,7 @@ ChatManager.Instance().openChatConnection()
 
 mp = MessageParser()
 cm = commandManager.MatroxCommandManager()
-pm = permissionsMgr.PermissionsManager()
+permissions = PermissionsManager()
 
 # start auto message
 announceManager.AnnouncementManager.Instance().startAnnouncementThread()
@@ -32,7 +32,7 @@ while True:
         # Parse the command
         loadedCommand, command = mp.loadCommandMessage(username, message)
         if loadedCommand:
-            allowed, finalMessage = pm.canUserRunCommand(username, command)
+            allowed, finalMessage = permissions.canUserRunCommand(username, command)
             if allowed:
                 print("Running command")
                 finalMessage = cm.runCommand(command)
