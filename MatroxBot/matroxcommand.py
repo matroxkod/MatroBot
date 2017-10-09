@@ -3,7 +3,7 @@
 import time
 import subprocess
 import os
-import permissionsmanager as permissionsMgr
+from permissionsmanager import PermissionLevel
 from announcementmanager import AnnouncementManager
 from utility import Utility
 #Note that this requires VLC 64-bit installed given Python 2.7.x 64-bit is installed
@@ -12,7 +12,7 @@ import operator
 
 class MatroxCommand:
 
-    def __init__(self, command = "", args = [], commandPermissionLevel = permissionsMgr.PermissionLevel.base):
+    def __init__(self, command = "", args = [], commandPermissionLevel = PermissionLevel.base):
         self.commandName = command
         self.commandArgs = args
         self.commandPermissionLevel = commandPermissionLevel
@@ -98,7 +98,7 @@ class MatroxCommandManager:
     def getCommandPermissionLevel(commandName):
         modLevelCommands = ["addannouncement", "reloadannouncements", "setannouncementinterval"]
         if commandName in modLevelCommands:
-            return permissionsMgr.PermissionLevel.mod
+            return PermissionLevel.mod
         else:
-            return permissionsMgr.PermissionLevel.base
+            return PermissionLevel.base
 

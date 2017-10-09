@@ -1,21 +1,20 @@
 #messageparse.py
 import re
-import matroxcommand as MatroxCommand
-
+from matroxcommand import MatroxCommand
+from matroxcommand import MatroxCommandManager
 class MessageParser():
     
-    @staticmethod
-    def loadCommandMessage(usr, msg):
+    def loadCommandMessage(self, usr, msg):
         user = usr
         isCommand, command, args = MessageParser.tryParseCommand(msg)
-        newCommand = MatroxCommand.MatroxCommand()
+        newCommand = MatroxCommand()
         if isCommand:
             #Check if we need to create a generic
-            cm = MatroxCommand.MatroxCommandManager()
+            cm = MatroxCommandManager()
             if cm.isGenericCommand(command):
-                newCommand = MessageParser.formatGenericPlay(command)
+                newCommand = self.formatGenericPlay(command)
             else:
-                newCommand = MatroxCommand.MatroxCommand(command, args)
+                newCommand = MatroxCommand(command, args)
             newCommand.commandPermissionLevel = cm.getCommandPermissionLevel(newCommand.commandName)
             print("Got a command")
             return True, newCommand
@@ -38,4 +37,4 @@ class MessageParser():
     @staticmethod
     def formatGenericPlay(command):
         #Format as usable generic
-        return MatroxCommand.MatroxCommand("generic", command)
+        return MatroxCommand("generic", command)

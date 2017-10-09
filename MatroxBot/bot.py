@@ -1,10 +1,10 @@
 # bot.py
 import re
 import time
-import messageparse as messageParser
-import matroxcommand as commandManager
-import permissionsmanager as permissionsMgr
-import announcementmanager as announceManager
+from messageparse import MessageParser
+from matroxcommand import MatroxCommandManager
+from permissionsmanager import PermissionsManager
+from announcementmanager import AnnouncementManager
 from chatmanager import ChatManager
 
 # Make sure you prefix the quotes with an 'r'!
@@ -13,12 +13,12 @@ CHAT_MSG=re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 # network functions go here
 ChatManager.Instance().openChatConnection()
 
-mp = messageParser.MessageParser()
-cm = commandManager.MatroxCommandManager()
-pm = permissionsMgr.PermissionsManager()
+messageParser = MessageParser()
+commandManager = MatroxCommandManager()
+permissionsManager = PermissionsManager()
 
 # start auto message
-announceManager.AnnouncementManager.Instance().startAnnouncementThread()
+AnnouncementManager.Instance().startAnnouncementThread()
 
 while True:
     response = ChatManager.Instance().receiveMessage()
@@ -30,12 +30,12 @@ while True:
         print(username + ": " + message)
         finalMessage = ""
         # Parse the command
-        loadedCommand, command = mp.loadCommandMessage(username, message)
+        loadedCommand, command = messageParser.loadCommandMessage(username, message)
         if loadedCommand:
-            allowed, finalMessage = pm.canUserRunCommand(username, command)
+            allowed, finalMessage = permissionsManager.canUserRunCommand(username, command)
             if allowed:
                 print("Running command")
-                finalMessage = cm.runCommand(command)
+                finalMessage = commandManager.runCommand(command)
 
         if(len(finalMessage) > 0):
             print(finalMessage)
