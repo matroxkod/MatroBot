@@ -20,6 +20,13 @@ class MatroxCommand:
 
 #Command Manager
 class MatroxCommandManager:
+
+    def __init__(self):
+        self.genericCommandArray = ["scott", "ring", "hype", "wrong"]
+        self.commands = {'playsong' : self.spotifyPlaySongCommand, 'generic' : self.playGeneric,
+        'addannouncement' : self.addAnnouncement , 'reloadannouncements' : self.reloadAnnouncements, 'setannouncementinterval' : self.setAnnouncementInterval,
+        'commands' : self.listCommands, 'help' : self.listCommands
+         }
     
     @staticmethod
     def spotifyPlaySongCommand(command):
@@ -40,10 +47,10 @@ class MatroxCommandManager:
 
     @staticmethod
     def playGeneric(command):
-        print("Playing Generic Clip " + command)
+        print("Playing Generic Clip " + command.commandArgs)
         instance = vlc.Instance()
         player = instance.media_player_new()
-        media = instance.media_new("file:///resources/" + command + ".wav")
+        media = instance.media_new("file:///resources/" + command.commandArgs + ".wav")
         player.set_media(media)
         player.play()
         return ""
@@ -65,34 +72,28 @@ class MatroxCommandManager:
             return u"Updated announcement interval to " + str(interval) + " seconds."
         else:
             return "Could not parse integer. Please try again."
+    
+    def listCommands(self, command):
+        commandList = ""
+        for individual in self.commands.keys():
+            if str(individual) != 'generic':
+                commandList = commandList + '!' + str(individual) + ' '
+        
+        for generic in self.genericCommandArray:
+            commandList = commandList + '!' + str(generic) + ' '
+
+        return commandList
 
     def runCommand(self, passedCommand):
         if passedCommand.commandName != "":
             #Get command from commands map
-            #command = command[passedCommand]
-            #return invoke command
-
-            if passedCommand.commandName == "playsong":
-              return self.spotifyPlaySongCommand(passedCommand)
-            if passedCommand.commandName == "generic":
-               return self.playGeneric(passedCommand.commandArgs)
-            if passedCommand.commandName == "addannouncement":
-               return self.addAnnouncement(passedCommand)
-            if passedCommand.commandName == "reloadannouncements":
-                return self.reloadAnnouncements(passedCommand)
-            if passedCommand.commandName == "setannouncementinterval":
-                return self.setAnnouncementInterval(passedCommand) 
-                
-
-    # TODO: Make commands driven by map
-    commands = {"playsong" : spotifyPlaySongCommand, 
-    }
-
-    @staticmethod
-    def isGenericCommand(commandName):
-        commandArray = ["scott", "ring", "hype", "wrong"]
-        return commandName in commandArray
-
+            if self.commands.has_key(passedCommand.commandName):
+                return self.commands[passedCommand.commandName](passedCommand)
+            else:
+                return "I don't know that command. Type !commands for a list of available commands."           
+                    
+    def isGenericCommand(self, commandName):        
+        return commandName in self.genericCommandArray
 
     @staticmethod
     def getCommandPermissionLevel(commandName):

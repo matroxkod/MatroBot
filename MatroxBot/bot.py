@@ -6,9 +6,13 @@ from matroxcommand import MatroxCommandManager
 from permissionsmanager import PermissionsManager
 from announcementmanager import AnnouncementManager
 from chatmanager import ChatManager
+from filewatcher import FileWatcher
 
 # Make sure you prefix the quotes with an 'r'!
 CHAT_MSG=re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
+
+# Start File Monitoring
+FileWatcher.Instance().startFileWatcherThread()
 
 # network functions go here
 ChatManager.Instance().openChatConnection()
