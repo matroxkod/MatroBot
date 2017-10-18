@@ -1,3 +1,4 @@
+# filemanager.py
 # Utility class for performing actions associated with basic txt files
 import os.path
 import copy
@@ -6,7 +7,6 @@ from singleton import Singleton
 
 @Singleton
 class FileManager:
-
     def __init__(self):
         self.ROOT_FILEPATH = "configs"
         self.ANNOUNCEMENTS_FILENAME = "announcements.txt"
@@ -14,21 +14,28 @@ class FileManager:
 
     # Returns an array of known announcements
     def loadAnnouncementFile(self):
+        # Try to load the file into memory for reading
         loadedFile =  self.openAnnouncementsFile("read")
         fileBuffer = []
         if(loadedFile):
+            # Load each line into memory
             for line in self.announcementFile:
                 if(len(line) > 3):
                     fileBuffer.append(line)
+        # Close the file for later use
         self.closeAnnouncementsFile()
+        # Return loaded flag and the buffer
         return loadedFile, fileBuffer
 
     # Adds an announcement to the file
     def addAnnouncement(self, announcementToAdd):
         try:
             if(self.announcementFile.closed):
+                # Open the announcement file for appending
                 self.openAnnouncementsFile("append")
+            # Add the announcement with EOL appended
             self.announcementFile.write(announcementToAdd.toString()+"\n")
+            # Close the file for later use
             self.closeAnnouncementsFile()
         except Exception as detail:
             print "Unexpected exception: ", detail
@@ -37,7 +44,7 @@ class FileManager:
         else:
             return True
 
-    # Opens the announcement file
+    # Opens the announcement file in the specified mode
     def openAnnouncementsFile(self, openMode):
         openedFileResult = False
         if(openMode == "write" or openMode == "read"):
@@ -85,3 +92,4 @@ class FileManager:
     def formatPath(filePath, fileName):
         path = filePath + '\\' + fileName
         return os.path.relpath(path)
+    
