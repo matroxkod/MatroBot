@@ -1,4 +1,4 @@
-#Utility class for performing actions associated with basic txt files
+# Utility class for performing actions associated with basic txt files
 import os.path
 import copy
 import sys
