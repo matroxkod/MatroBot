@@ -35,7 +35,6 @@ class FileWatcher:
                 # Check the last mod (UNIX timestamp) on file
                 lastMod = os.path.getmtime(watched.filePath)
                 if lastMod > watched.lastModTime:
-                    print('Updating time and running command')
                     # File has been modded since we last saw it
                     watched.lastModTime = lastMod
                     watched.commandToRun("")
