@@ -1,6 +1,5 @@
 from filemanager import FileManager
 from utility import Utility
-
 from threading import Thread
 import time
 from singleton import Singleton
@@ -8,7 +7,6 @@ from chatmanager import ChatManager
 
 # Data structure of an annnoncement
 class Announcement:
-
     def __init__(self, announcementid, message = "There is no message"):
         self.announcementid = announcementid
         self.message = message
@@ -32,11 +30,13 @@ class AnnouncementManager:
         self.loadedFile = False
         self.announcementInterval = 300
     
+    # Starts running the announcments thread
     def startAnnouncementThread(self):
         announcementThread = Thread(target = self.runThread)
         announcementThread.setDaemon(True)
         announcementThread.start()
 
+    # Announcements thread that will cycle through memory every x seconds and display to chat
     def runThread(self):
         attemptsToLoad = 0
         currentAnnounceId = 1
@@ -62,7 +62,8 @@ class AnnouncementManager:
                     print "Failed to load announcements file after 1 attempt."
                     return
             interval = 300
-            if not isinstance( self.announcementInterval, (int, long)):            
+            # Check if this is an actual integer befor attempting to parse
+            if not isinstance(self.announcementInterval, (int, long)):            
                 parsed, interval = Utility.try_parse_int(self.announcementInterval)
                 if not parsed:
                     print "Failed to parse correct interval. Defaulting to 25 seconds."
@@ -70,6 +71,7 @@ class AnnouncementManager:
                 interval = self.announcementInterval
             time.sleep(interval)
     
+    # Loads announcements from file into memory
     def loadAnnouncements(self):
         self.loadedFile, fileContents = FileManager.Instance().loadAnnouncementFile()
         if(self.loadedFile):
@@ -91,7 +93,8 @@ class AnnouncementManager:
                     print "Invalid announcement format ", announce
         else:
             print "Error loading announcements"
-
+    
+    # Adds an announcement to the announcements file and to memory
     def addAnnouncementMessage(self, message):
         if(self.loadedFile == False):
             self.loadAnnouncements()
@@ -102,6 +105,7 @@ class AnnouncementManager:
             return "Added announcement " + newAnnouncement.messageToString()
         return "Failed to add announcement " + message + ". Check error logs."
 
+    # Forces a reload of the announcements file into memory
     def reloadAnnouncements(self):
         self.loadAnnouncements()
         if(self.loadedFile):
