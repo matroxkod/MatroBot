@@ -1,3 +1,4 @@
+# announcementmanager.py
 from filemanager import FileManager
 from utility import Utility
 from threading import Thread
@@ -20,7 +21,7 @@ class Announcement:
         except:
             return self.message
 
-# Class responsible for announcement thread, loading announcements
+# Class responsible for announcement thread and loading announcements
 # saving announcements
 @Singleton
 class AnnouncementManager:
