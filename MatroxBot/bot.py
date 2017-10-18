@@ -1,4 +1,4 @@
-# bot.py
+# Starting point of MatroxBot
 import re
 import time
 from messageparse import MessageParser
@@ -14,21 +14,24 @@ CHAT_MSG=re.compile(r"^:\w+!\w+@\w+\.tmi\.twitch\.tv PRIVMSG #\w+ :")
 # Start File Monitoring
 FileWatcher.Instance().startFileWatcherThread()
 
-# network functions go here
+# Open connection to the target chat
 ChatManager.Instance().openChatConnection()
 
 messageParser = MessageParser()
 commandManager = MatroxCommandManager()
 permissionsManager = PermissionsManager()
 
-# start auto message
+# Start auto announcements
 AnnouncementManager.Instance().startAnnouncementThread()
 
 while True:
+    # Blocking socket receive call
     response = ChatManager.Instance().receiveMessage()
     if response == "ping":
+        # We don't do anything with pings
         pass
     else:
+        # Separate out username and message for further parsing
         username = re.search(r"\w+", response).group(0) # return the entire match
         message = CHAT_MSG.sub("", response)
         print(username + ": " + message)
@@ -36,12 +39,12 @@ while True:
         # Parse the command
         loadedCommand, command = messageParser.loadCommandMessage(username, message)
         if loadedCommand:
+            # Check for permissions on commands
             allowed, finalMessage = permissionsManager.canUserRunCommand(username, command)
             if allowed:
-                print("Running command")
+                # Run the command
                 finalMessage = commandManager.runCommand(command)
-
+        # Display any response messages from running the command
         if(len(finalMessage) > 0):
-            print(finalMessage)
             ChatManager.Instance().sendMessageToChat(finalMessage)
     time.sleep(1 / .5)
