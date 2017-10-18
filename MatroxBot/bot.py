@@ -1,3 +1,4 @@
+# bot.py
 # Starting point of MatroxBot
 import re
 import time
