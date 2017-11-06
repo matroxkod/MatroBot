@@ -2,6 +2,7 @@
 # Starting point of MatroxBot
 import re
 import time
+import sys
 from messageparse import MessageParser
 from matroxcommand import MatroxCommandManager
 from permissionsmanager import PermissionsManager
@@ -43,8 +44,11 @@ while True:
             # Check for permissions on commands
             allowed, finalMessage = permissionsManager.canUserRunCommand(username, command)
             if allowed:
-                # Run the command
-                finalMessage = commandManager.runCommand(command)
+                try:
+                    # Run the command
+                    finalMessage = commandManager.runCommand(command)
+                except:
+                    print "Unexpected error running command ", command.commandName, sys.exc_info()[0]
         # Display any response messages from running the command
         if(len(finalMessage) > 0):
             ChatManager.Instance().sendMessageToChat(finalMessage)

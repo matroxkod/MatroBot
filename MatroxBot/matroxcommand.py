@@ -6,6 +6,7 @@ import os
 from permissionsmanager import PermissionLevel
 from announcementmanager import AnnouncementManager
 from utility import Utility
+from mqtt import ColorManager
 #Note that this requires VLC 64-bit installed given Python 2.7.x 64-bit is installed
 import vlc
 import operator
@@ -25,8 +26,10 @@ class MatroxCommandManager:
         self.genericCommandArray = ["scott", "ring", "hype", "wrong"]
         self.commands = {'playsong' : self.spotifyPlaySongCommand, 'generic' : self.playGeneric,
         'addannouncement' : self.addAnnouncement , 'reloadannouncements' : self.reloadAnnouncements, 'setannouncementinterval' : self.setAnnouncementInterval,
-        'commands' : self.listCommands, 'help' : self.listCommands
+        'commands' : self.listCommands, 'help' : self.listCommands, 'changecolor' : self.changeColor 
          }
+        self.helpCommands = {'changecolor' : ColorManager.Instance().help, 'addannouncement' : AnnouncementManager.Instance().addAnnouncementHelp,
+        'setannouncementinterval' : AnnouncementManager.Instance().setAnnouncementIntervalHelp }
     
     @staticmethod
     def spotifyPlaySongCommand(command):
@@ -55,6 +58,21 @@ class MatroxCommandManager:
         player.play()
         return ""
 
+# Color Changing
+    @staticmethod
+    def changeColor(command):
+        if(len(command.commandArgs) == 0 or command.commandArgs[0].lower() == "help" or command.commandArgs[0] == "?"):
+            return ColorManager.Instance().help()
+        if(command.commandArgs[0][0] == "#"):
+            try:
+                ColorManager.Instance().changeColorHex(command.commandArgs[0])
+            except KeyError:
+                return "Invalid hex color code enter. Please use only values 0-9 and a-f."
+        else:
+            ColorManager.Instance().changeColor(command.commandArgs[0])
+        return "Changed color to "+ command.commandArgs[0]
+
+# Announcement commands
     @staticmethod
     def addAnnouncement(command):
         if(len(command.commandArgs) > 0):
@@ -72,7 +90,8 @@ class MatroxCommandManager:
             return u"Updated announcement interval to " + str(interval) + " seconds."
         else:
             return "Could not parse integer. Please try again."
-    
+
+# List commands    
     def listCommands(self, command):
         commandList = ""
         for individual in self.commands.keys():
@@ -88,7 +107,12 @@ class MatroxCommandManager:
         if passedCommand.commandName != "":
             #Get command from commands map
             if self.commands.has_key(passedCommand.commandName):
-                return self.commands[passedCommand.commandName](passedCommand)
+                # Check if the command has proper args
+                needsHelp, helpCommand = self.checkHelpCommand(passedCommand)
+                if(needsHelp):
+                    return helpCommand()
+                else:                    
+                    return self.commands[passedCommand.commandName](passedCommand)
             else:
                 return "I don't know that command. Type !commands for a list of available commands."           
                     
@@ -103,3 +127,9 @@ class MatroxCommandManager:
         else:
             return PermissionLevel.base
 
+    def checkHelpCommand(self, command):
+        if(self.helpCommands.has_key(command.commandName) and len(command.commandArgs) == 0):
+            return True, self.helpCommands[command.commandName]
+        else:
+            #TODO - This is bad programming
+            return False, self.helpCommands[command.commandName]
