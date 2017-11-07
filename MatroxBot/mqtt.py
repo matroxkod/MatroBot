@@ -8,23 +8,36 @@ from utility import Utility
 
 @Singleton
 class ColorManager:
+    def __init__(self):
+        self.pulseEffectTranslations = {"pulse", "freakout", "chaos"}
+        self.colorRotateEffectTranslations = {"rotate", "loop"}
 
     @staticmethod
     def changeColor(targetColor):
-        client = mqtt.Client("matroxbot")
-        client.connect(secrets.MQTT_BROKER_ADDRESS)
-        client.publish(secrets.MQTT_COLOR_TOPIC, targetColor)
+        MQTTInterface.publishMessage(secrets.MQTT_COLOR_TOPIC, targetColor)
 
-    @staticmethod
-    def changeColorHex(targetHex):
+    def changeColorHex(self, targetHex):
         value = targetHex.lstrip('#')
         util = Utility()
         hex = util.hex_to_rgb(value)
         strHex = str(hex[0]) + "," + str(hex[1]) + "," + str(hex[2])
-        client = mqtt.Client("matroxbot")
-        client.connect(secrets.MQTT_BROKER_ADDRESS)
-        client.publish(secrets.MQTT_COLOR_TOPIC, strHex)
+        MQTTInterface.publishMessage(secrets.MQTT_COLOR_HEX_TOPIC, strHex)
+
+    def changeColorEffect(self, targetEffect):
+        # Check if loop
+        if targetEffect in self.colorRotateEffectTranslations:
+            MQTTInterface.publishMessage(secrets.MQTT_EFFECT_TOPIC, "light.lifx_effect_colorloop")
+        elif targetEffect in self.pulseEffectTranslations:
+            MQTTInterface.publishMessage(secrets.MQTT_EFFECT_TOPIC, "light.lifx_effect_pulse")
 
     @staticmethod
     def help():
         return "Use !colorchange to set the mood. Specify either a CSS3 color name of hex value after the command and watch the magic. !colorchange red || !colorchange #Ff0000"
+
+class MQTTInterface:
+    
+    @staticmethod
+    def publishMessage(topic, message):
+        client = mqtt.Client("matroxbot")
+        client.connect(secrets.MQTT_BROKER_ADDRESS)
+        client.publish(topic, message)

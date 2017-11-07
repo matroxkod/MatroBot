@@ -61,14 +61,19 @@ class MatroxCommandManager:
 # Color Changing
     @staticmethod
     def changeColor(command):
-        if(len(command.commandArgs) == 0 or command.commandArgs[0].lower() == "help" or command.commandArgs[0] == "?"):
-            return ColorManager.Instance().help()
-        if(command.commandArgs[0][0] == "#"):
+        # Determine what kind of color change we're doing        
+        if(command.commandArgs[0] in ColorManager.Instance().pulseEffectTranslations or
+        command.commandArgs[0] in ColorManager.Instance().colorRotateEffectTranslations):
+            # Effect?
+            ColorManager.Instance().changeColorEffect(command.commandArgs[0])
+        elif(command.commandArgs[0][0] == "#"):
+            # Hex?
             try:
                 ColorManager.Instance().changeColorHex(command.commandArgs[0])
             except KeyError:
                 return "Invalid hex color code enter. Please use only values 0-9 and a-f."
         else:
+            # Color name
             ColorManager.Instance().changeColor(command.commandArgs[0])
         return "Changed color to "+ command.commandArgs[0]
 
