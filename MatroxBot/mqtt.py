@@ -26,9 +26,9 @@ class ColorManager:
     def changeColorEffect(self, targetEffect):
         # Check if loop
         if targetEffect in self.colorRotateEffectTranslations:
-            MQTTInterface.publishMessage(secrets.MQTT_EFFECT_TOPIC, "light.lifx_effect_colorloop")
+            MQTTInterface.publishMessage(secrets.MQTT_EFFECT_TOPIC, "lifx_effect_colorloop")
         elif targetEffect in self.pulseEffectTranslations:
-            MQTTInterface.publishMessage(secrets.MQTT_EFFECT_TOPIC, "light.lifx_effect_pulse")
+            MQTTInterface.publishMessage(secrets.MQTT_EFFECT_TOPIC, "lifx_effect_pulse")
 
     @staticmethod
     def help():
@@ -39,5 +39,6 @@ class MQTTInterface:
     @staticmethod
     def publishMessage(topic, message):
         client = mqtt.Client("matroxbot")
+        client.username_pw_set(secrets.MQTT_USERNAME,secrets.MQTT_PASSWORD)
         client.connect(secrets.MQTT_BROKER_ADDRESS)
         client.publish(topic, message)
