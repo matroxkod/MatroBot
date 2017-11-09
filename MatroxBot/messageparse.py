@@ -25,10 +25,10 @@ class MessageParser():
     def tryParseCommand(msg):
         if msg[0] == "!":
             # Split and take everything after !
-            command = msg.split()[0][1:]
+            command = msg.split()[0][1:].lower()
             # Args are any values after first argument
             args = msg.split()[1:]
-            print("Command is " + command )
+            print("Command is " + command.lower() )
             #print(*args, sep=' ')
             return True, command, args
         else:

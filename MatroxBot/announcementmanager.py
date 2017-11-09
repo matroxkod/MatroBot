@@ -30,6 +30,7 @@ class AnnouncementManager:
         self.maxAnnouncementId = 0
         self.loadedFile = False
         self.announcementInterval = 300
+        self.currentAnnounceId = 1
     
     # Starts running the announcments thread
     def startAnnouncementThread(self):
@@ -46,14 +47,14 @@ class AnnouncementManager:
                 # Check if we actually loaded announcements
                 if(len(self.announcements) > 0):
                     try:
-                        ChatManager.Instance().sendMessageToChat(self.announcements[currentAnnounceId].messageToString())  
+                        ChatManager.Instance().sendMessageToChat(self.announcements[self.currentAnnounceId].messageToString())  
                     except Exception as detail:
                         print "Unexpected exception in announcement thread: ", detail
                         pass
-                    currentAnnounceId = currentAnnounceId + 1                                     
-                    if(currentAnnounceId > self.maxAnnouncementId):
+                    self.currentAnnounceId = self.currentAnnounceId + 1                                     
+                    if(self.currentAnnounceId > self.maxAnnouncementId):
                         # Start over
-                        currentAnnounceId = 1
+                        self.currentAnnounceId = 1
             else:
                 if(attemptsToLoad < 2):
                     # Try to load the file once
@@ -113,4 +114,12 @@ class AnnouncementManager:
             return "Reloaded announcements file."
         else:
             return "Could not reload announcements file. Check error log."
-      
+
+    # Help
+    @staticmethod  
+    def addAnnouncementHelp():
+        return "Adds an announcement to the list. Specify the text of what to add. !addannouncement Hello Funny People!"
+
+    @staticmethod
+    def setAnnouncementIntervalHelp():
+        return "Updates the interval for announcements in seconds. !setannouncementinterval 5"
