@@ -71,7 +71,17 @@ class AnnouncementManager:
                     print "Failed to parse correct interval. Defaulting to 25 seconds."
             else:
                 interval = self.announcementInterval
-            time.sleep(interval)
+            _originalInterval = interval
+            for i in range (0, interval):
+                time.sleep(1)
+                interval = _originalInterval
+                if not isinstance(self.announcementInterval, (int, long)):            
+                    parsed, interval = Utility.try_parse_int(self.announcementInterval)
+                else:
+                    interval = self.announcementInterval
+                # Check to see if the interval changed. If it did, break out of the loop
+                if _originalInterval != interval:
+                    break
     
     # Loads announcements from file into memory
     def loadAnnouncements(self):
