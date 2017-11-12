@@ -1,4 +1,5 @@
-1 Welcome to the stream! Make yourself at home and enjoy some good tunes and games!
-2 Feel free to make use of my chat functionality like !wrong and !ring.
-3 If you like what you see, hit the follow button and join us for more adventures!
-4 You are awesome!
+Id	Message
+1	Welcome to the stream! Make yourself at home and enjoy some good tunes and games!
+2	Feel free to make use of my chat functionality like !wrong and !ring or !commands for a full list.
+3	If you like what you see, hit the follow button and join us for more adventures!
+4	You are awesome!

@@ -5,6 +5,7 @@ from threading import Thread
 import time
 from singleton import Singleton
 from chatmanager import ChatManager
+from csvprocessor import CSVFileProcessor
 
 # Data structure of an annnoncement
 class Announcement:
@@ -85,24 +86,36 @@ class AnnouncementManager:
     
     # Loads announcements from file into memory
     def loadAnnouncements(self):
-        self.loadedFile, fileContents = FileManager.Instance().loadAnnouncementFile()
+#        self.loadedFile, fileContents = FileManager.Instance().loadAnnouncementFile()
+        self.loadedFile, fileContents = CSVFileProcessor.Instance().readAnnouncements()         
         if(self.loadedFile):
             # Clear out announcements
             self.announcements.clear()
+            i = 0
+            for announce in fileContents:
+                try:
+                    id = fileContents[i].key
+                    message = fileContents[i].value
+                    self.announcements[id] = Announcement(id, key)
+                    if (id > self.maxAnnouncementId):
+                        self.maxAnnouncementId = id
+                    i = i + 1
+                except:
+                    pass
             # Parse file into individual announcements
-            for line in fileContents:
-                announce = line.split( )
-                if (len(announce) > 1):
-                    parsed, loadedId = Utility().try_parse_int(announce[0])
-                    if (parsed):
-                        if (loadedId > self.maxAnnouncementId):
-                             self.maxAnnouncementId = loadedId
-                        newAnnouncement = Announcement(loadedId, ' '.join(announce[1:]))
-                        self.announcements[loadedId] = newAnnouncement
-                    else:
-                        print "Error parsing announcement id ", announce[0]
-                else:
-                    print "Invalid announcement format ", announce
+#            for line in fileContents:
+#                announce = line.split( )
+#                if (len(announce) > 1):
+#                    parsed, loadedId = Utility().try_parse_int(announce[0])
+#                    if (parsed):
+#                        if (loadedId > self.maxAnnouncementId):
+#                             self.maxAnnouncementId = loadedId
+#                        newAnnouncement = Announcement(loadedId, ' '.join(announce[1:]))
+#                        self.announcements[loadedId] = newAnnouncement
+#                    else:
+#                        print "Error parsing announcement id ", announce[0]
+#                else:
+#                    print "Invalid announcement format ", announce
         else:
             print "Error loading announcements"
     

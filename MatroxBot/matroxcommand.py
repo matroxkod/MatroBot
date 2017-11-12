@@ -28,7 +28,7 @@ class MatroxCommandManager:
         'addannouncement' : self.addAnnouncement , 'reloadannouncements' : self.reloadAnnouncements, 'setannouncementinterval' : self.setAnnouncementInterval,
         'commands' : self.listCommands, 'help' : self.listCommands, 'changecolor' : self.changeColor 
          }
-        self.helpCommands = {'changecolor' : ColorManager.Instance().help, 'addannouncement' : AnnouncementManager.Instance().addAnnouncementHelp,
+        self.helpCommands = {'default' : self.runCommand, 'changecolor' : ColorManager.Instance().help, 'addannouncement' : AnnouncementManager.Instance().addAnnouncementHelp,
         'setannouncementinterval' : AnnouncementManager.Instance().setAnnouncementIntervalHelp }
     
     @staticmethod
@@ -137,4 +137,4 @@ class MatroxCommandManager:
             return True, self.helpCommands[command.commandName]
         else:
             #TODO - This is bad programming
-            return False, self.helpCommands[command.commandName]
+            return False, self.helpCommands['default']

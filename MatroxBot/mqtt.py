@@ -32,7 +32,7 @@ class ColorManager:
 
     @staticmethod
     def help():
-        return "Use !colorchange to set the mood. Specify either a CSS3 color name of hex value after the command and watch the magic. !colorchange red || !colorchange #Ff0000"
+        return "Use !colorchange to set the mood. Specify either a CSS3 color name of hex value after the command and watch the magic. !colorchange red || !colorchange #Ff0000 || !colorchange pulse || !colorchange loop"
 
 class MQTTInterface:
     
