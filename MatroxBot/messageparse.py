@@ -5,20 +5,28 @@ from matroxcommand import MatroxCommandManager
 class MessageParser():
     
     def loadCommandMessage(self, usr, msg):
+        cm = MatroxCommandManager()
         user = usr
-        isCommand, command, args = MessageParser.tryParseCommand(msg)
+        isCommand, command, args = self.tryParseCommand(msg)
+        if not isCommand:
+            isParsedWord, command = self.tryStringMatch(msg)
         newCommand = MatroxCommand()
         if isCommand:
             #Check if we need to create a generic
-            cm = MatroxCommandManager()
             if cm.isGenericCommand(command):
-                newCommand = self.formatGenericPlay(command)
+                newCommand = cm.formatGenericPlay(command)
             else:
                 newCommand = MatroxCommand(command, args)
             newCommand.commandPermissionLevel = cm.getCommandPermissionLevel(newCommand.commandName)
             print("Got a command")
             return True, newCommand
         else:
+            if isParsedWord:
+                #TODO Update for better handling
+                if cm.isAllowOnceCommand(command):
+                    newCommand = MatroxCommand(command, "")
+                newCommand.commandPermissionLevel = cm.getCommandPermissionLevel(newCommand.commandName)
+                return True, newCommand
             return False, newCommand
 
     @staticmethod
@@ -35,6 +43,13 @@ class MessageParser():
             return False, "", []
 
     @staticmethod
-    def formatGenericPlay(command):
-        #Format as usable generic
-        return MatroxCommand("generic", command)
+    def tryStringMatch(msg):
+        helloArray = ["hi", "hello", "hey", "howdy", "yo"]
+        for word in msg.split():
+            word = word.lower()
+            if(word in helloArray):
+                # Match the command
+                return True, "hellofriendonce"
+            else:
+                return False, ""
+
