@@ -3,6 +3,7 @@
 import time
 import subprocess
 import os
+import random
 from permissionsmanager import PermissionLevel
 from announcementmanager import AnnouncementManager
 from utility import Utility
@@ -23,10 +24,11 @@ class MatroxCommand:
 class MatroxCommandManager:
 
     def __init__(self):
-        self.genericCommandArray = ["scott", "ring", "hype", "wrong"]
+        self.allowOnceCommand = ["hellofriendonce"]
+        self.genericCommandArray = ["scott", "ring", "hype", "wrong", "silly", "hellofriend"]
         self.commands = {'playsong' : self.spotifyPlaySongCommand, 'generic' : self.playGeneric,
         'addannouncement' : self.addAnnouncement , 'reloadannouncements' : self.reloadAnnouncements, 'setannouncementinterval' : self.setAnnouncementInterval,
-        'commands' : self.listCommands, 'help' : self.listCommands, 'changecolor' : self.changeColor 
+        'commands' : self.listCommands, 'help' : self.listCommands, 'changecolor' : self.changeColor, "hellofriendonce" : self.hellofriend 
          }
         self.helpCommands = {'changecolor' : ColorManager.Instance().help, 'addannouncement' : AnnouncementManager.Instance().addAnnouncementHelp,
         'setannouncementinterval' : AnnouncementManager.Instance().setAnnouncementIntervalHelp }
@@ -108,6 +110,14 @@ class MatroxCommandManager:
 
         return commandList
 
+# Allow Once Commands
+    def hellofriend(self, command):
+        # Get the random appended number
+        appendFile = random.randint(1,5)
+        command.commandArgs = "hellofriend" + str(appendFile)
+        return self.playGeneric(command)
+
+
     def runCommand(self, passedCommand):
         if passedCommand.commandName != "":
             #Get command from commands map
@@ -122,13 +132,17 @@ class MatroxCommandManager:
                 return "I don't know that command. Type !commands for a list of available commands."           
                     
     def isGenericCommand(self, commandName):        
-        return commandName in self.genericCommandArray
+        return commandName in self.genericCommandArray 
 
-    @staticmethod
-    def getCommandPermissionLevel(commandName):
+    def isAllowOnceCommand(self, commandName):
+        return commandName in self.allowOnceCommand
+
+    def getCommandPermissionLevel(self, commandName):
         modLevelCommands = ["addannouncement", "reloadannouncements", "setannouncementinterval"]
         if commandName in modLevelCommands:
             return PermissionLevel.mod
+        elif commandName in self.allowOnceCommand:
+            return PermissionLevel.allowOnce
         else:
             return PermissionLevel.base
 
@@ -137,4 +151,10 @@ class MatroxCommandManager:
             return True, self.helpCommands[command.commandName]
         else:
             #TODO - This is bad programming
-            return False, self.helpCommands[command.commandName]
+            return False, self.listCommands
+
+    @staticmethod
+    def formatGenericPlay(command):
+        #Format as usable generic
+        return MatroxCommand("generic", command)
+

@@ -6,6 +6,8 @@ import datetime
 class PermissionLevel:
     mod = 0
     base = 1
+    override = 2
+    allowOnce = 3
 
 class User:
 
@@ -13,6 +15,7 @@ class User:
         self.name = name
         self.nextReplyTime = nextReplyTime
         self.permissionLevel = permissionlevel
+        self.allowOnceCommands = {}
 
 class PermissionsManager:
 
@@ -22,7 +25,7 @@ class PermissionsManager:
     # Check if the user can run the command
     def canUserRunCommand(self, usrName, command):
         # Check if user is spamming
-        notSpam, spamMsg = self.checkSpam(usrName)
+        notSpam, spamMsg = self.checkSpam(usrName, command)
         if (notSpam):
             # Check if user has permission to run the command
             if(self.checkCommandPermissions(usrName, command)):
@@ -40,7 +43,7 @@ class PermissionsManager:
         else:
             return True
 
-    def checkSpam(self, usrName):
+    def checkSpam(self, usrName, command):
         # Store when command was received
         receivedTime = datetime.datetime.now().time()
         
@@ -51,11 +54,22 @@ class PermissionsManager:
             if(self.isModUser(usrName)):
                 newUsr.permissionLevel = PermissionLevel.mod
             self.updateUserTime(usrName, newUsr, 2)
+            if(command.commandPermissionLevel == PermissionLevel.allowOnce):
+                newUsr.allowOnceCommands[command.commandName] = True
             print("Added new user " + newUsr.name)
             return True, ""
         else:
             user = self.knownUsers[usrName]
             print(u"Pulled user " + user.name + " nextReply:" + str(user.nextReplyTime) + " received:" + str(receivedTime) )
+            # Check is user has used allow once commands already
+            if command.commandPermissionLevel == PermissionLevel.allowOnce:
+                if command.commandName not in user.allowOnceCommands:
+                    # User has not used the command
+                    user.allowOnceCommands[command.commandName] = True
+                    return True, ""
+                else:
+                    return not user.allowOnceCommands[command.commandName], ""
+
             # Check if the user is allowed to post
             if receivedTime > user.nextReplyTime:
                 self.updateUserTime(usrName, user, 4)
